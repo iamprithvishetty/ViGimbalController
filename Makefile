@@ -97,6 +97,8 @@ BOARD    := ./board
 
 USERINC += ./src_communication/communication_message
 
+USERINC += ./src_flash
+
 USERINC += ./src_imu/imu_access
 USERINC += ./src_imu/imu_madgwick
 USERINC += ./src_imu/imu_mpu6050
@@ -119,6 +121,8 @@ USERINC += ./src_utilities/utilities_miscellaneous
 
 USERSRC += ./src_communication/communication_message/message_access.c
 
+USERSRC += ./src_flash/flash.c
+
 USERSRC += ./src_imu/imu_access/imu_access.c
 USERSRC += ./src_imu/imu_madgwick/madgwick.c
 USERSRC += ./src_imu/imu_mpu6050/mpu6050.c
@@ -131,6 +135,7 @@ USERSRC += ./src_pid/pid_access/pid_access.c
 USERSRC += ./src_system/system_usb/usbcfg.c
 
 USERSRC += ./src_user/user_data/user_data.c
+USERSRC += ./src_user/user_data/data_access.c
 
 USERSRC += ./src_utilities/utilities_calibration/calibration_gyro.c
 USERSRC += ./src_utilities/utilities_i2c/i2c_chibi.c
