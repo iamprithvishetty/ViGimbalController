@@ -223,7 +223,6 @@ flash_error_t efl_lld_read(void *instance, flash_offset_t offset,
 
   /* Ready state again.*/
   devp->state = FLASH_READY;
-
   return err;
 }
 
@@ -316,6 +315,49 @@ flash_error_t efl_lld_program(void *instance, flash_offset_t offset,
   devp->state = FLASH_READY;
 
   return err;
+}
+
+/**
+ * @brief   Starts an sector erase operation.
+ *
+ * @param[in] ip                    pointer to a @p EFlashDriver instance
+ * @param[in] offset                page offset to be erased
+ * @return                          An error code.
+ * @retval FLASH_NO_ERROR           if there is no erase operation in progress.
+ * @retval FLASH_BUSY_ERASING       if there is an erase operation in progress.
+ * @retval FLASH_ERROR_HW_FAILURE   if access to the memory failed.
+ *
+ * @notapi
+ */
+flash_error_t efl_lld_start_erase(void *instance,
+                                         flash_offset_t offset) {
+  EFlashDriver *devp = (EFlashDriver *)instance;
+
+  osalDbgCheck(instance != NULL);
+  osalDbgCheck((size_t)offset <= (size_t)efl_lld_descriptor.size);
+  osalDbgAssert((devp->state == FLASH_READY) || (devp->state == FLASH_ERASE),
+                "invalid state");
+
+  /* No erasing while erasing.*/
+  if (devp->state == FLASH_ERASE) {
+    return FLASH_BUSY_ERASING;
+  }
+
+  /* Clearing error status bits.*/
+  stm32_flash_clear_status(devp);
+
+  /* Enable page erase.*/
+  devp->flash->CR |= FLASH_CR_PER;
+
+  /* Set the page.*/
+  devp->flash->AR = (uint32_t)(efl_lld_descriptor.address + offset);
+
+  /* Start the erase.*/
+  devp->flash->CR |= FLASH_CR_STRT;
+
+  while((devp->flash->SR & FLASH_SR_BSY) == 1);
+
+  return FLASH_NO_ERROR;
 }
 
 /**
