@@ -3,6 +3,7 @@
 
 #include "data_access.h"
 #include "math_utils.h"
+#include "flash.h"
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -162,8 +163,32 @@ void process(char *message, uint8_t len_message, message_decoder *decoder){
  */
 void return_data(char *parameter){
 
+    // Check if SAVE was entered
+    if(!strcmp(parameter, "SAVE")){
+
+        // Writes the at command data into flash memory
+        write_data_flash(PAGE_START, PAGE_END);
+
+        print("ok data saved\n");
+
+        return;
+
+    }
+
+    // Check if LOAD was entered
+    if(!strcmp(parameter, "LOAD")){
+
+        // Read the data from flash memory and saves into at command 
+        read_data_flash(PAGE_START);
+
+        print("ok data loaded\n");
+
+        return;
+
+    }
+
     // checking all the commands
-    for(int params = 0; params<(int)(sizeof(user_conf_data)/sizeof(user_conf_data[0])); params++) {
+    for(int params = 0; params<length_user_conf_data; params++) {
 
         // if parameter is matched
         if(!strcmp(parameter, user_conf_data[params].message)) {
@@ -187,7 +212,7 @@ void return_data(char *parameter){
 void set_data(char *parameter, float value){
 
     // checking all the commands
-    for(int params = 0; params<(int)(sizeof(user_conf_data)/sizeof(user_conf_data[0])); params++) {
+    for(int params = 0; params<length_user_conf_data; params++) {
         
         // if parameter is matched
         if(!strcmp(parameter, user_conf_data[params].message)) {
