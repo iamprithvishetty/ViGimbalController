@@ -23,6 +23,7 @@
 #include "imu_access.h"
 #include "madgwick.h"
 #include "calibration_gyro.h"
+#include "orientation.h"
 
 #include "motor_access.h"
 #include "motor_control.h"
@@ -32,23 +33,6 @@
 
 #include "message_access.h"
 #include "user_data.h"
-
-
-/*
- * blink thread
- */
-
-static THD_WORKING_AREA(wa_thread_blink, 128);
-static __attribute__((noreturn)) THD_FUNCTION(thread_blink, arg)
-{
-
-  (void)arg;
-  chRegSetThreadName("blink");
-  while (true)
-  {
-    chThdSleepMicroseconds(1000);
-  }
-}
 
 
 /*
@@ -324,6 +308,53 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_serial_com, arg)
   }
 }
 
+/*
+ * blink thread
+ */
+
+static THD_WORKING_AREA(wa_thread_blink, 128);
+static __attribute__((noreturn)) THD_FUNCTION(thread_blink, arg)
+{
+
+  (void)arg;
+  chRegSetThreadName("blink");
+  while (true)
+  {
+    // Blink Red if IMU is not initialized
+    if(!imu_cam.is_initialized){
+      palClearLine(LED_1);
+      palSetLine(LED_2);
+      chThdSleepMilliseconds(500);
+      palClearLine(LED_2);
+      chThdSleepMilliseconds(500);
+    }
+
+    // Check if IMU is initialized
+    else if(imu_cam.is_initialized){
+
+      // If Gimbal Thread is initialized then blink green
+      if(gimbal_thread_initialized){
+        palClearLine(LED_2);
+        palSetLine(LED_1);
+        chThdSleepMilliseconds(200);
+        palClearLine(LED_1);
+        chThdSleepMilliseconds(200);
+      }
+      // If Gimbal Thread is not initialized then blink green and red alternately
+      else {
+        palClearLine(LED_1);
+        palSetLine(LED_2);
+        chThdSleepMilliseconds(200);
+        palSetLine(LED_1);
+        palClearLine(LED_2);
+        chThdSleepMilliseconds(200);
+      }
+
+    }
+
+  }
+}
+
 
 /*
  * application entry point.
@@ -421,6 +452,9 @@ int main(void)
 
   while (true)
   { 
-    chThdSleepMicroseconds(1000);
+    if(debug){
+      print("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",accel_x_cam, accel_y_cam, accel_z_cam, gyro_x_cam, gyro_y_cam, gyro_z_cam, angle_cam[PITCH], angle_cam[ROLL], angle_cam[YAW], accel_x_platform, accel_y_platform, accel_z_platform, gyro_x_platform, gyro_y_platform, gyro_z_platform, angle_platform[PITCH], angle_platform[ROLL], angle_cam[YAW]);
+    }
+    chThdSleepMilliseconds(40);
   }
 }
