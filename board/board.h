@@ -18,14 +18,14 @@
 #define _BOARD_H_
 
 /*
- * Setup for the LeafLabs Maple Mini.
+ * Setup for the Vi Gimbal Controller
  */
 
 /*
  * Board identifier.
  */
-#define BOARD_MAPLEMINI_STM32_F103
-#define BOARD_NAME              "LeafLabs Maple Mini"
+#define BOARD_VI_GIMBAL_CONTROLLER
+#define BOARD_NAME              "Vi Gimbal Controller"
 
 /*
  * Board frequencies.
@@ -38,65 +38,9 @@
  */
 #define STM32F103xE
 
-/*
- * IO pins assignments
- *
- * numbering is sorted by onboard/connectors, as from the schematics in
- * https://github.com/leaflabs/maplemini
- */
-
 /* on-board */
 
-#define GPIOB_LED               1
 #define GPIOB_USB_DISC          9
-#define GPIOD_OSC_IN            0
-#define GPIOD_OSC_OUT           1
-
-/* J1 connector */
-
-// pin 1:       AV+
-// pin 2:       AV-
-// pin 3:       VBAT
-#define GPIOC_TAMPER_RTC        13      // pin 4
-#define GPIOC_OSC32_IN          14      // pin 5
-#define GPIOC_OSD32_OUT         15      // pin 6
-// pin 7:       RESET
-#define GPIOA_USART2_CTS        0       // pin 8
-#define GPIOA_USART2_RTS        1       // pin 9
-#define GPIOA_USART2_TX         2       // pin 10
-#define GPIOA_USART2_RX         3       // pin 11
-#define GPIOA_SPI1_NSS          4       // pin 12
-#define GPIOA_SPI1_SCK          5       // pin 13
-#define GPIOA_SPI1_MISO         6       // pin 14
-#define GPIOA_SPI1_MOSI         7       // pin 15
-#define GPIOB_ADC12_IN8         0       // pin 16
-#define GPIOB_BOOT1             2       // pin 17
-#define GPIOB_I2C2_SCL          10      // pin 18
-#define GPIOB_I2C2_SDA          11      // pin 19
-// pin 20: VIN
-
-/* J2 connector */
-
-#define GPIOB_SPI2_NSS          12      // pin 1
-#define GPIOB_SPI2_SCK          13      // pin 2
-#define GPIOB_SPI2_MISO         14      // pin 3
-#define GPIOB_SPI2_MOSI         15      // pin 4
-#define GPIOA_USART1_CK         8       // pin 5
-#define GPIOA_USART1_TX         9       // pin 6
-#define GPIOA_USART1_RX         10      // pin 7
-#define GPIOA_USBDM             11      // pin 8
-#define GPIOA_USBDP             12      // pin 9
-#define GPIOA_JTMS              13      // pin 10
-#define GPIOA_JTCK              14      // pin 11
-#define GPIOA_JTDI              15      // pin 12
-#define GPIOB_JTDO              3       // pin 13
-#define GPIOB_JTRST             4       // pin 14
-#define GPIOB_I2C1_SMBA         5       // pin 15
-#define GPIOB_I2C1_SCL          6       // pin 16
-#define GPIOB_I2C1_SDA          7       // pin 17
-#define GPIOB_BOOT0_BUTTON      8       // pin 18
-// pin 19: GND
-// pin 20: VCC
 
 #define LED_1                   PAL_LINE(GPIOB,12)
 #define LED_2                   PAL_LINE(GPIOB,13)
@@ -128,20 +72,30 @@
 /*
  * Port A setup.
  * Everything input with pull-up except:
- * PA2  - Alternate output  (USART2 TX).
- * PA3  - Normal input      (USART2 RX).
- * PA9  - Alternate output  (USART1 TX).
- * PA10 - Normal input      (USART1 RX).
+ * PA1  - Alternate Push Pull output 50MHz (PWM TIM2 CH2)
+ * PA2  - Alternate Push Pull output 50MHz (PWM TIM2 CH3)
+ * PA3  - Alternate Push Pull output 50MHz (PWM TIM2 CH4)
+ * PA6  - Alternate Push Pull output 50MHz (PWM TIM3 CH1)
+ * PA7  - Alternate Push Pull output 50MHz (PWM TIM3 CH2)
+ * PA8  - Digital input (ICU TIM1 CH1)
  */
 #define VAL_GPIOACRL            0xBB88BBB8      /*  PA7...PA0 */
-#define VAL_GPIOACRH            0x888884B4      /* PA15...PA8 */
+#define VAL_GPIOACRH            0x88888884      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
 /*
  * Port B setup.
  * Everything input with pull-up except:
- * PB1    - Push Pull output  (LED).
- * PB9    - Push Pull output  (USB switch).
+ * PB0  - Alternate Push Pull output 50MHz (PWM TIM3 CH3)
+ * PB1  - Alternate Push Pull output 50MHz (PWM TIM3 CH4)
+ * PB6  - Alternate Open Drain output 2MHz (I2C1_SCL).
+ * PB7  - Alternate Open Drain output 2MHz (I2C1_SDA).
+ * PB8  - Alternate Push Pull output 50MHz (PWM TIM4 CH3)
+ * PB9  - Alternate Push Pull output 50MHz (PWM TIM4 CH4)
+ * PB10 - Alternate Open Drain output 2MHz (I2C2_SCL).
+ * PB11 - Alternate Open Drain output 2MHz (I2C2_SDA).
+ * PB12 - Push Pull output 50MHz (LED_1).
+ * PB13 - Push Pull output 50MHz (LED_2).
  */
 #define VAL_GPIOBCRL            0xEE8888BB      /*  PB7...PB0 */
 #define VAL_GPIOBCRH            0x8833EEBB      /* PB15...PB8 */
@@ -150,6 +104,7 @@
 /*
  * Port C setup.
  * Everything input with pull-up except:
+ * PC6  - Digital input (ICU TIM8 CH1)
  */
 #define VAL_GPIOCCRL            0x84888888      /*  PC7...PC0 */
 #define VAL_GPIOCCRH            0x88888888      /* PC15...PC8 */
