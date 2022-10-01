@@ -163,8 +163,8 @@ static void adcerrorcallback(ADCDriver *adcp, adcerror_t err) {
 
 /*
  * ADC conversion group.
- * Mode:        Continuous, 16 samples of 8 channels, SW triggered.
- * Channels:    IN10, IN11, IN10, IN11, IN10, IN11, Sensor, VRef.
+ * Mode:        Continuous, 1 sample of 1 channel, SW triggered.
+ * Channels:    IN5
  */
 static const ADCConversionGroup adcgrpcfg = {
   FALSE,
