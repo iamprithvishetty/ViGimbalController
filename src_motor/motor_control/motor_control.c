@@ -10,6 +10,11 @@
 #include "misc_utils.h"
 
 /*
+ * How the PWM for motor is generated
+ * https://colab.research.google.com/drive/1Kfoi_Qr0pTlBm5-16_QmSE2LrDPSTf2k?usp=sharing
+ */
+ 
+/*
  * Calculates the pwm value based on the steps directly
  * param1 : *current_motor -> motor_accessor with configuration parameters
  * param2 : step -> direct step
