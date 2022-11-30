@@ -303,7 +303,9 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_serial_com, arg)
       }
     }
 
-    process(message_received,incoming_character_counter,&decoder_gc);
+    if(incoming_character_counter > 0){
+      process(message_received,incoming_character_counter,&decoder_gc);
+    }  
     chThdSleepMilliseconds(10);
   }
 }
@@ -444,7 +446,7 @@ int main(void)
 
   chThdCreateStatic(wa_thread_blink, sizeof(wa_thread_blink), NORMALPRIO, thread_blink, NULL);
   chThdCreateStatic(wa_thread_serial_com, sizeof(wa_thread_serial_com), NORMALPRIO + 1, thread_serial_com, NULL);
-  chThdCreateStatic(wa_thread_gimbal, sizeof(wa_thread_gimbal), NORMALPRIO + 2, thread_gimbal, NULL);
+  // chThdCreateStatic(wa_thread_gimbal, sizeof(wa_thread_gimbal), NORMALPRIO + 2, thread_gimbal, NULL);
 
   /*
    * Normal main() thread activity
