@@ -19,7 +19,7 @@ void process(char *message, uint8_t len_message, message_decoder *decoder){
 
     if(len_message>=3){
         // check if the message start is in the right format
-        if(message[0] == decoder->start[0] && message[1] == decoder->start[1] && message[2] == decoder->set_seperator){
+        if(message[0] == decoder->start[0] && message[1] == decoder->start[1] && message[2] == decoder->command_seperator){
             
             // message check to skip the first three characters
             uint8_t message_check = 3;
