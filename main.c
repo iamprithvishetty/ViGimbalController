@@ -73,18 +73,12 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
     if(!gimbal_thread_initialized){
 
       // init the imu
-      uint8_t max_tries = 10;
       while(!imu_initialize(&imu_cam)){
-        if(--max_tries){
-          break;
-        }
         chThdSleepMilliseconds(1);
       }
-      if(max_tries){
-        imu_cam.is_initialized = true;
-      }
+      imu_cam.is_initialized = true;
 
-      max_tries = 10;
+      uint8_t max_tries = 10;
       while(!imu_initialize(&imu_platform)){
         if(--max_tries){
           break;
@@ -102,20 +96,6 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 
       init_pid(&pid_pitch_angle, dt);
       init_pid(&pid_roll_angle, dt);
-
-      // wait until imu is not initialized
-      while(imu_cam.is_initialized!=true){
-        chThdSleepMilliseconds(100);
-      }
-
-      // the gimbal will work even if the 2nd imu is not there so retry and move ahead
-      uint8_t retry = 2;
-      while(imu_platform.is_initialized!=true){
-          if(--retry){
-            break;
-          }
-          chThdSleepMilliseconds(100);
-      }
 
       // calibrate the gyro values
       if(imu_cam.is_initialized){
@@ -446,7 +426,7 @@ int main(void)
 
   chThdCreateStatic(wa_thread_blink, sizeof(wa_thread_blink), NORMALPRIO, thread_blink, NULL);
   chThdCreateStatic(wa_thread_serial_com, sizeof(wa_thread_serial_com), NORMALPRIO + 1, thread_serial_com, NULL);
-  // chThdCreateStatic(wa_thread_gimbal, sizeof(wa_thread_gimbal), NORMALPRIO + 2, thread_gimbal, NULL);
+  chThdCreateStatic(wa_thread_gimbal, sizeof(wa_thread_gimbal), NORMALPRIO + 2, thread_gimbal, NULL);
 
   /*
    * Normal main() thread activity
