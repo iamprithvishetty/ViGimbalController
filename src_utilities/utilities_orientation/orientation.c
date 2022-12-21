@@ -6,7 +6,14 @@ void orientation_remap(imu_accessor *current_imu, float *ax, float *ay, float *a
 
         switch(current_imu->orientation){
 
+            // x-> left, y-> front, z-> down
             case 1:
+                *ax = -*ax;
+                *ay = *ay;
+                *az = -*az;
+                *gx = -*gx;
+                *gy = *gy;
+                *gz = -*gz;
                 break;
 
             case 2:
