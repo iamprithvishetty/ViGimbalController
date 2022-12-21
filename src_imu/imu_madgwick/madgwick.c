@@ -15,14 +15,18 @@ void madgwick_init(madgwick_filter *current_filter, float current_beta, float cu
 	current_filter->q3 = 0.0f;
 
 	current_filter->beta = current_beta;
-	current_filter->sampling_frequency = current_sampling_frequency;
+	current_filter->inv_sampling_frequency = 1.0f/current_sampling_frequency;
 	
 }
 
 void madgwick_set_sampling_freq(madgwick_filter *current_filter, float current_sampling_frequency) {
 
-	current_filter->sampling_frequency = current_sampling_frequency;
+	current_filter->inv_sampling_frequency = 1.0f/current_sampling_frequency;
 
+}
+
+void madgwick_set_beta(madgwick_filter *current_filter, float current_beta) {
+	current_filter->beta = current_beta;
 }
 
 void madgwick_update(madgwick_filter *current_filter, float gx, float gy, float gz, float ax, float ay, float az) {
@@ -86,10 +90,10 @@ void madgwick_update(madgwick_filter *current_filter, float gx, float gy, float 
 	}
 
 	// Integrate rate of change of quaternion to yield quaternion
-	current_filter->q0 += q1_dot / current_filter->sampling_frequency;
-	current_filter->q1 += q2_dot / current_filter->sampling_frequency;
-	current_filter->q2 += q3_dot / current_filter->sampling_frequency;
-	current_filter->q3 += q4_dot / current_filter->sampling_frequency;
+	current_filter->q0 += q1_dot * current_filter->inv_sampling_frequency;
+	current_filter->q1 += q2_dot * current_filter->inv_sampling_frequency;
+	current_filter->q2 += q3_dot * current_filter->inv_sampling_frequency;
+	current_filter->q3 += q4_dot * current_filter->inv_sampling_frequency;
 
 	// Normalise quaternion
 	recipNorm = inv_sqrt(current_filter->q0 * current_filter->q0 + current_filter->q1 * current_filter->q1 + current_filter->q2 * current_filter->q2 + current_filter->q3 * current_filter->q3);
