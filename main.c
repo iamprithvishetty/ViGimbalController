@@ -83,14 +83,15 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       imu_cam.is_initialized = true;
 
       // init the platform imu
-      uint8_t max_tries = 10;
+      uint8_t max_retries = 10;
       while(!imu_initialize(&imu_platform)){
-        if(--max_tries){
+        if(max_retries == 0){
           break;
         }
+        max_retries -= 1;
         chThdSleepMilliseconds(1);
       }
-      if(max_tries){
+      if(max_retries != 0){
         imu_platform.is_initialized = true;
       }
 
@@ -118,17 +119,22 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         madgwick_init(&madgwick_platform, 10.0, 1/dt);
       }
 
-      //update madgwick value and retrieve angle values
-      if(imu_cam.is_initialized){
-        imu_get_all(&imu_cam, &accel_x_cam, &accel_y_cam, &accel_z_cam, &gyro_x_cam, &gyro_y_cam, &gyro_z_cam);
-        madgwick_update(&madgwick_cam , gyro_x_cam, gyro_y_cam, gyro_z_cam, accel_x_cam, accel_y_cam, accel_z_cam);
-        madgwick_compute_angle(&madgwick_cam, angle_cam);
-      }
-      if(imu_platform.is_initialized){
-        imu_get_all(&imu_platform, &accel_x_platform, &accel_y_platform, &accel_z_platform, &gyro_x_platform, &gyro_y_platform, &gyro_z_platform);
-        madgwick_update(&madgwick_platform , gyro_x_platform, gyro_y_platform, gyro_z_platform, accel_x_platform, accel_y_platform, accel_z_platform);
-        madgwick_compute_angle(&madgwick_platform, angle_platform);
-      }
+      // let madgwick angles settle
+      for(int i=0; i<1000; i++) {
+        //update madgwick value and retrieve angle values
+        if(imu_cam.is_initialized){
+          imu_get_all(&imu_cam, &accel_x_cam, &accel_y_cam, &accel_z_cam, &gyro_x_cam, &gyro_y_cam, &gyro_z_cam);
+          orientation_remap(&imu_cam, &accel_x_cam, &accel_y_cam, &accel_z_cam, &gyro_x_cam, &gyro_y_cam, &gyro_z_cam);
+          madgwick_update(&madgwick_cam , gyro_x_cam, gyro_y_cam, gyro_z_cam, accel_x_cam, accel_y_cam, accel_z_cam);
+          madgwick_compute_angle(&madgwick_cam, angle_cam);
+        }
+        if(imu_platform.is_initialized){
+          imu_get_all(&imu_platform, &accel_x_platform, &accel_y_platform, &accel_z_platform, &gyro_x_platform, &gyro_y_platform, &gyro_z_platform);
+          madgwick_update(&madgwick_platform , gyro_x_platform, gyro_y_platform, gyro_z_platform, accel_x_platform, accel_y_platform, accel_z_platform);
+          madgwick_compute_angle(&madgwick_platform, angle_platform);
+        }
+        chThdSleepMicroseconds(dt_us);
+      }  
 
       // Change the beta to a lower value to make the angle more dependent on gyro value
       madgwick_set_beta(&madgwick_cam, 0.1);
@@ -146,6 +152,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
     
       // Get the imu values
       imu_get_all(&imu_cam, &accel_x_cam, &accel_y_cam, &accel_z_cam, &gyro_x_cam, &gyro_y_cam, &gyro_z_cam);
+      orientation_remap(&imu_cam, &accel_x_cam, &accel_y_cam, &accel_z_cam, &gyro_x_cam, &gyro_y_cam, &gyro_z_cam);
       madgwick_update(&madgwick_cam , gyro_x_cam, gyro_y_cam, gyro_z_cam, accel_x_cam, accel_y_cam, accel_z_cam);
       madgwick_compute_angle(&madgwick_cam, angle_cam);
 
