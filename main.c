@@ -61,7 +61,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
   // sampling time in seconds
   float dt = 0.002;
   // sampling time in microseconds
-  int dt_us = (int)(dt*10e6);
+  int dt_us = (int)(dt*1e6);
 
   // Initializing the sin array that we'll be using for supplying pwm values
   init_sin_array();
@@ -72,12 +72,17 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 
     if(!gimbal_thread_initialized){
 
-      // init the imu
+      // reset the imu initialization state
+      imu_cam.is_initialized = false;
+      imu_platform.is_initialized = false;
+
+      // init the camera imu
       while(!imu_initialize(&imu_cam)){
         chThdSleepMilliseconds(1);
       }
       imu_cam.is_initialized = true;
 
+      // init the platform imu
       uint8_t max_tries = 10;
       while(!imu_initialize(&imu_platform)){
         if(--max_tries){
@@ -107,10 +112,10 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 
       // init madgwick filter
       if(imu_cam.is_initialized){
-        madgwick_init(&madgwick_cam, 10.0, 1.0f/dt);
+        madgwick_init(&madgwick_cam, 10.0, 1/dt);
       }
       if(imu_platform.is_initialized){
-        madgwick_init(&madgwick_platform, 10.0, 1.0f/dt);
+        madgwick_init(&madgwick_platform, 10.0, 1/dt);
       }
 
       //update madgwick value and retrieve angle values
@@ -125,9 +130,11 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         madgwick_compute_angle(&madgwick_platform, angle_platform);
       }
 
-      madgwick_cam.beta = 0.01;
-      madgwick_platform.beta = 0.01;
+      // Change the beta to a lower value to make the angle more dependent on gyro value
+      madgwick_set_beta(&madgwick_cam, 0.1);
+      madgwick_set_beta(&madgwick_platform, 0.1);
 
+      // Set the flag to denote gimbal is initialized
       gimbal_thread_initialized = 1;
     
     }
@@ -238,7 +245,6 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 
       // Wait for 2000us but also taking into account the time taken for the execution of the process in the loop
       chThdSleepMicroseconds(dt_us - TIME_I2US(time_loop_execution));
-
     }
   }
 }
