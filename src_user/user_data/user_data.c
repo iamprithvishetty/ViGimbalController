@@ -72,7 +72,7 @@ motor_accessor motor_yaw = {
   .line[1] = {CHANNEL_3, &PWMD4},
   .line[2] = {CHANNEL_4, &PWMD4},
 
-  .power = 70,
+  .power = 30,
   .pole_pair = 7,
   .direction = CLOCKWISE,
 

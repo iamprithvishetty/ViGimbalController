@@ -6,8 +6,8 @@
 
 typedef enum{
 
-    CLOCKWISE,
-    ANTICLOCKWISE
+    CLOCKWISE = 1,
+    ANTICLOCKWISE = -1
 
 }motor_direction;
 

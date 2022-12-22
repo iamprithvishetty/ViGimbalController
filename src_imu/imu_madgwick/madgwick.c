@@ -106,8 +106,8 @@ void madgwick_update(madgwick_filter *current_filter, float gx, float gy, float 
 
 void madgwick_compute_angle(madgwick_filter *current_filter, float *angle) {
 
-	angle[ROLL] = atan2f(current_filter->q0*current_filter->q1 + current_filter->q2*current_filter->q3, 0.5f - current_filter->q1*current_filter->q1 - current_filter->q2*current_filter->q2)*R2D;
-	angle[PITCH] = asinf(-2.0f * (current_filter->q1*current_filter->q3 - current_filter->q0*current_filter->q2))*R2D;
+	angle[PITCH] = atan2f(current_filter->q0*current_filter->q1 + current_filter->q2*current_filter->q3, 0.5f - current_filter->q1*current_filter->q1 - current_filter->q2*current_filter->q2)*R2D;
+	angle[ROLL] = asinf(-2.0f * (current_filter->q1*current_filter->q3 - current_filter->q0*current_filter->q2))*R2D;
 	angle[YAW] = atan2f(current_filter->q1*current_filter->q2 + current_filter->q0*current_filter->q3, 0.5f - current_filter->q2*current_filter->q2 - current_filter->q3*current_filter->q3)*R2D;
 
 }

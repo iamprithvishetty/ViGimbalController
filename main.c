@@ -189,7 +189,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       }
 
       // current step to be given based on motor direction
-      float feed_step = (int)step_pitch*motor_pitch.direction;
+      int feed_step = (int)step_pitch*motor_pitch.direction;
 
       pitch_step_memory += feed_step;
       set_pwm_direct(&motor_pitch, &pitch_step_memory);
