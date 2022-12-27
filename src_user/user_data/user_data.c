@@ -82,9 +82,9 @@ motor_accessor motor_yaw = {
 
 pid_accessor pid_pitch_rotation = {
 
-  .kp = 10.0f,
+  .kp = 20.0f,
   .ki = 0.0f,
-  .kd = 0.095f,
+  .kd = 0.1f,
 
   .error_cutoff = 0.0f,
   .derivative_cutoff = 0.0f
@@ -103,9 +103,9 @@ pid_accessor pid_pitch_angle = {
 
 pid_accessor pid_roll_rotation = {
 
-  .kp = 15.0f,
+  .kp = 30.0f,
   .ki = 0.0f,
-  .kd = 0.4f,
+  .kd = 0.45f,
 
   .error_cutoff = 0.0f,
   .derivative_cutoff = 0.0f
@@ -124,9 +124,9 @@ pid_accessor pid_roll_angle = {
 
 pid_accessor pid_yaw_rotation = {
 
-  .kp = 10.0f,
+  .kp = 30.0f,
   .ki = 0.0f,
-  .kd = 0.3f,
+  .kd = 0.4f,
 
   .error_cutoff = 0.0f,
   .derivative_cutoff = 0.0f
