@@ -2,11 +2,13 @@
 
 void orientation_remap(imu_accessor *current_imu, float *ax, float *ay, float *az, float *gx, float *gy, float *gz){
 
+    float temporary;
+
     if(current_imu->mount == MOUNT_CAMERA){
 
         switch(current_imu->orientation){
 
-            // x-> left, y-> front, z-> down
+            // x-> right, y-> back, z-> down
             case 1:
                 *ax = -*ax;
                 *ay = *ay;
@@ -16,13 +18,38 @@ void orientation_remap(imu_accessor *current_imu, float *ax, float *ay, float *a
                 *gz = -*gz;
                 break;
 
+            // x-> back, y-> left, z-> down
             case 2:
+                temporary = *ax;
+                *ax = *ay;
+                *ay = temporary;
+                *az = -*az;
+                temporary = *gx;
+                *gx = *gy;
+                *gy = temporary;
+                *gz = -*gz;
                 break;
 
+            // x-> left, y-> front, z->down
             case 3:
+                *ax = *az;
+                *ay = -*ay;
+                *az = -*az;
+                *gx = *gx;
+                *gy = -*gy;
+                *gz = -*gz;
                 break;
 
+            // x-> front, y->right, z->down
             case 4:
+                temporary = *ax;
+                *ax = -*ay;
+                *ay = -temporary;
+                *az = -*az;
+                temporary = *gx;
+                *gx = -*gy;
+                *gy = -temporary;
+                *gz = -*gz;
                 break;
 
             case 5:
