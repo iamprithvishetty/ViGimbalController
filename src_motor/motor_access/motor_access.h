@@ -31,8 +31,8 @@ typedef struct{
 
     pwm_channel_driver line[3];
       
-    uint8_t power;
-    uint8_t pole_pair;
+    int power;
+    int pole_pair;
     motor_direction direction;
 
 }motor_accessor;
