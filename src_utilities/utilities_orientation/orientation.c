@@ -52,16 +52,48 @@ void orientation_remap(imu_accessor *current_imu, float *ax, float *ay, float *a
                 *gz = -*gz;
                 break;
 
+            // x-> right, y->front, z->up
             case 5:
+                *ax = -*ax;
+                *ay = -*ay;
+                *az = *az;
+                *gx = -*gx;
+                *gy = -*gy;
+                *gz = *gz;
                 break;
 
+            // x-> back, y->right, z->up
             case 6:
+                temporary = *ax;
+                *ax = -*ay;
+                *ay = temporary;
+                *az = *az;
+                temporary = *gx;
+                *gx = -*gy;
+                *gy = temporary;
+                *gz = *gz;
                 break;
 
+            // x->left, y->back, z->up
             case 7:
+                *ax = *ax;
+                *ay = *ay;
+                *az = *az;
+                *gx = *gx;
+                *gy = *gy;
+                *gz = *gz;
                 break;
             
+            // x->front, y->left, z->up
             case 8:
+                temporary = *ax;
+                *ax = *ay;
+                *ay = -temporary;
+                *az = *az;
+                temporary = *gx;
+                *gx = *gy;
+                *gy = -temporary;
+                *gz = *gz;
                 break;
         
             case 9:
