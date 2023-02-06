@@ -244,7 +244,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         
       }
       else {
-        gyro_rotation_yaw = gyro_z_cam*cos(angle_cam[PITCH]*D2R) + gyro_y_cam*sin(angle_cam[PITCH]*D2R);
+        gyro_rotation_yaw = (gyro_z_cam*cos(angle_cam[PITCH]*D2R) + gyro_y_cam*sin(angle_cam[PITCH]*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R) ;
       }
 
       feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps);
