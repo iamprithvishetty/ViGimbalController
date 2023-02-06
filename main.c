@@ -33,6 +33,7 @@
 
 #include "message_access.h"
 #include "user_data.h"
+#include "math_utils.h"
 
 
 /*
@@ -137,8 +138,8 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       }  
 
       // Change the beta to a lower value to make the angle more dependent on gyro value
-      madgwick_set_beta(&madgwick_cam, 0.1);
-      madgwick_set_beta(&madgwick_platform, 0.1);
+      madgwick_set_beta(&madgwick_cam, 0.01);
+      madgwick_set_beta(&madgwick_platform, 0.01);
 
       // Set the flag to denote gimbal is initialized
       gimbal_thread_initialized = 1;
@@ -177,16 +178,21 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       
       // factor for converting angle to steps
       float to_steps = (float)SIN_ARRAY_SIZE*(float)motor_pitch.pole_pair/360.0;
-      // calculate the value to be feeded for gyro correction
-      float feed_cam_rotation_pitch = update_pid(&pid_pitch_rotation, gyro_x_cam * dt * to_steps);
+      // store the imu rotation value here for the motor to move
+      float gyro_rotation_pitch;
+      // value to be feeded for gyro correction
+      float feed_cam_rotation_pitch;
 
       float step_pitch;
       if(imu_platform_enable && imu_platform.is_initialized){
-        
+      
       }
       else {
-        step_pitch = feed_cam_angle_pitch + feed_cam_rotation_pitch;
+        gyro_rotation_pitch = gyro_x_cam;
       }
+
+      feed_cam_rotation_pitch = update_pid(&pid_pitch_rotation, gyro_rotation_pitch * dt * to_steps);
+      step_pitch = feed_cam_angle_pitch + feed_cam_rotation_pitch;
 
       // current step to be given based on motor direction
       int feed_step = (int)step_pitch*motor_pitch.direction;
@@ -202,16 +208,21 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       
       // factor for converting angle to steps
       to_steps = (float)SIN_ARRAY_SIZE*(float)motor_roll.pole_pair/360.0;
-      // calculate the value to be feeded for gyro correction
-      float feed_cam_rotation_roll = update_pid(&pid_roll_rotation, gyro_y_cam * dt * to_steps);
+      // store the imu rotation value here for the motor to move
+      float gyro_rotation_roll;
+      // value to be feeded for gyro correction
+      float feed_cam_rotation_roll;
 
       float step_roll;
       if(imu_platform_enable && imu_platform.is_initialized){
         
       }
       else {
-        step_roll = feed_cam_angle_roll + feed_cam_rotation_roll;
+        gyro_rotation_roll = gyro_y_cam*cos(angle_cam[PITCH]*D2R)-gyro_z_cam*sin(angle_cam[PITCH]*D2R);
       }
+
+      feed_cam_rotation_roll = update_pid(&pid_roll_rotation, gyro_rotation_roll * dt * to_steps);
+      step_roll = feed_cam_angle_roll + feed_cam_rotation_roll;
 
       // current step to be given based on motor direction
       feed_step = (int)step_roll*motor_roll.direction;
@@ -223,16 +234,21 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 
       // factor for converting angle to steps
       to_steps = (float)SIN_ARRAY_SIZE*(float)motor_yaw.pole_pair/360.0;
-      // calculate the value to be feeded for gyro correction
-      float feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_z_cam * dt * to_steps);
+      // store the imu rotation value here for the motor to move
+      float gyro_rotation_yaw;
+      // value to be feeded for gyro correction
+      float feed_cam_rotation_yaw;
 
       float step_yaw;
       if(imu_platform_enable && imu_platform.is_initialized){
         
       }
       else {
-        step_yaw = feed_cam_rotation_yaw;
+        gyro_rotation_yaw = gyro_z_cam*cos(angle_cam[PITCH]*D2R) + gyro_y_cam*sin(angle_cam[PITCH]*D2R);
       }
+
+      feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps);
+      step_yaw = feed_cam_rotation_yaw;
 
       // current step to be given based on motor direction
       feed_step = (int)step_yaw*motor_yaw.direction;
