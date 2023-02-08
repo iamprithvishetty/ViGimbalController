@@ -124,9 +124,19 @@ pid_accessor pid_roll_angle = {
 
 pid_accessor pid_yaw_rotation = {
 
-  .kp = 30.0f,
+  .kp = 20.0f,
   .ki = 0.0f,
-  .kd = 0.4f,
+  .kd = 0.1f,
+
+  .error_cutoff = 0.0f,
+  .derivative_cutoff = 0.0f
+
+};
+pid_accessor pid_yaw_angle = {
+
+  .kp = 0.7f,
+  .ki = 0.0f,
+  .kd = 0.0f,
 
   .error_cutoff = 0.0f,
   .derivative_cutoff = 0.0f
@@ -135,6 +145,7 @@ pid_accessor pid_yaw_rotation = {
 
 float user_pitch_angle = 0.0f;
 float user_roll_angle = 0.0f;
+float user_yaw_angle = 0.0f;
 
 int imu_platform_enable = 0;
 

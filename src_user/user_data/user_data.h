@@ -22,9 +22,11 @@ extern pid_accessor pid_yaw_rotation;
 
 extern pid_accessor pid_pitch_angle;
 extern pid_accessor pid_roll_angle;
+extern pid_accessor pid_yaw_angle;
 
 extern float user_pitch_angle;
 extern float user_roll_angle;
+extern float user_yaw_angle;
 
 extern int imu_platform_enable;
 
