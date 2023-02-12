@@ -22,9 +22,6 @@ void write_data_flash(uint8_t start_page, uint8_t end_page){
         print("Less space\n");
         return;
     }
-
-    // Perform Unlock Sequence
-    efl_lld_start(&EFLD1);
     
     // Erase the pages
     for(uint8_t start = start_page; start <= end_page; start++){
@@ -32,9 +29,6 @@ void write_data_flash(uint8_t start_page, uint8_t end_page){
         efl_lld_start_erase(&EFLD1, 0x400*start_page);
 
     }
-
-    // Perform Lock 
-    efl_lld_stop(&EFLD1);
 
     // Dynamic memory allocated for at_command data split into 4 1byte data
     uint8_t *data_user = (uint8_t *)malloc(sizeof(uint8_t)*4*length_user_conf_data);
