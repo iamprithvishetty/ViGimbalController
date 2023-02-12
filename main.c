@@ -52,6 +52,9 @@ float gyro_x_platform,gyro_y_platform,gyro_z_platform;
 float accel_x_platform,accel_y_platform,accel_z_platform;
 float angle_platform[3];
 
+// To store relative angles
+float relative_yaw, relative_pitch;
+
 static THD_WORKING_AREA(wa_thread_gimbal, 2048);
 static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 {
@@ -175,9 +178,6 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         angle_platform[YAW] += gyro_z_platform*dt;
       }
 
-      // Calculate yaw absolute difference
-      float angle_yaw_absolute = angle_cam[YAW] - angle_platform[YAW];
-
       // Reset the Yaw angle when platform imu is enabled from user
       if(imu_platform_enable && !imu_platform_init_flag) {
         angle_cam[YAW] = 0;
@@ -188,6 +188,10 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         imu_platform_init_flag = false;
       }
   
+      // Calculate yaw difference between platform and cam
+      relative_yaw = angle_cam[YAW] - angle_platform[YAW];
+      // calculate relative pitch between platform and camera
+      relative_pitch = angle_platform[PITCH]*cos(relative_yaw*D2R) + angle_platform[ROLL]*sin(relative_yaw*D2R);
 
     
       // calculate the value to be feeded for angle correction
@@ -232,7 +236,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 
       float step_roll;
       if(imu_platform_enable && imu_platform.is_initialized){
-        gyro_rotation_roll = gyro_y_cam*cos((angle_cam[PITCH]-angle_platform[PITCH])*D2R)-gyro_z_cam*sin((angle_cam[PITCH]-angle_platform[PITCH])*D2R);
+        gyro_rotation_roll = gyro_y_cam*cos((angle_cam[PITCH]-relative_pitch)*D2R)-gyro_z_cam*sin((angle_cam[PITCH]-relative_pitch)*D2R);
       }
       else {
         gyro_rotation_roll = gyro_y_cam*cos(angle_cam[PITCH]*D2R)-gyro_z_cam*sin(angle_cam[PITCH]*D2R);
@@ -266,7 +270,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         else if(angle_cam[YAW]<-1){
           feed_cam_angle_yaw = -10;
         }
-        gyro_rotation_yaw = (gyro_z_cam*cos((angle_cam[PITCH]-angle_platform[PITCH])*D2R) + gyro_y_cam*sin((angle_cam[PITCH]-angle_platform[PITCH])*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R) ;
+        gyro_rotation_yaw = (gyro_z_cam*cos((angle_cam[PITCH]-relative_pitch)*D2R) + gyro_y_cam*sin((angle_cam[PITCH]-relative_pitch)*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R) ;
       }
       else {
         gyro_rotation_yaw = (gyro_z_cam*cos(angle_cam[PITCH]*D2R) + gyro_y_cam*sin(angle_cam[PITCH]*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R) ;
@@ -489,7 +493,7 @@ int main(void)
   while (true)
   { 
     if(debug){
-      print("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",accel_x_cam, accel_y_cam, accel_z_cam, gyro_x_cam, gyro_y_cam, gyro_z_cam, angle_cam[PITCH], angle_cam[ROLL], angle_cam[YAW], accel_x_platform, accel_y_platform, accel_z_platform, gyro_x_platform, gyro_y_platform, gyro_z_platform, angle_platform[PITCH], angle_platform[ROLL], angle_platform[YAW]);
+      print("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",accel_x_cam, accel_y_cam, accel_z_cam, gyro_x_cam, gyro_y_cam, gyro_z_cam, angle_cam[PITCH], angle_cam[ROLL], angle_cam[YAW], accel_x_platform, accel_y_platform, accel_z_platform, gyro_x_platform, gyro_y_platform, gyro_z_platform, angle_platform[PITCH], angle_platform[ROLL], angle_platform[YAW], relative_yaw, relative_pitch);
     }
     chThdSleepMilliseconds(40);
   }
