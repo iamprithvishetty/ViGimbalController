@@ -37,9 +37,9 @@ data_access user_conf_data[] = {
     {.message = "BATT_VOLT"    , .type = FLOATING,  .data_float = &battery_voltage,      .data_float_min = 0,   .data_float_max = 0},
     {.message = "BATT_APLHA"   , .type = FLOATING,  .data_float = &battery_voltage_alpha,.data_float_min = 0,   .data_float_max = 1},    
 
-    {.message = "ENABLE_IMU2"      , .type = INTEGER,   .data_int   = &imu_platform_enable,.data_int_min = 0,     .data_int_max = 1},
-    {.message = "IMU1_ORIENTATION" , .type = INTEGER,   .data_int   = &imu_cam.orientation,.data_int_min = 1,     .data_int_max = 24},
-    {.message = "IMU2_ORIENTATION" , .type = INTEGER,   .data_int   = &imu_cam.orientation,.data_int_min = 1,     .data_int_max = 24},
+    {.message = "ENABLE_IMU2"      , .type = INTEGER,   .data_int = &imu_platform_enable,.data_int_min = 0,     .data_int_max = 1},
+    {.message = "IMU1_ORIENTATION" , .type = INTEGER,   .data_int = &imu_cam.orientation,.data_int_min = 1,     .data_int_max = 24},
+    {.message = "IMU2_ORIENTATION" , .type = INTEGER,   .data_int = &imu_platform.orientation,.data_int_min = 1,.data_int_max = 24},
 
 };
 

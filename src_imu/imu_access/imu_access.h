@@ -24,7 +24,7 @@ typedef struct{
     I2CDriver *i2c_driver;
     imu_id id;
     imu_mount mount;
-    uint8_t orientation;
+    int orientation;
     union{
         uint8_t imu_addr;
         struct{
