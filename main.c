@@ -270,13 +270,14 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         else if(angle_cam[YAW]<-1){
           feed_cam_angle_yaw = -10;
         }
-        gyro_rotation_yaw = (gyro_z_cam*cos((angle_cam[PITCH]-relative_pitch)*D2R) + gyro_y_cam*sin((angle_cam[PITCH]-relative_pitch)*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R) ;
+        gyro_rotation_yaw = (gyro_z_cam*cos((angle_cam[PITCH]-relative_pitch)*D2R) + gyro_y_cam*sin((angle_cam[PITCH]-relative_pitch)*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R);
+        feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps) + gyro_z_platform * dt * to_steps;
       }
       else {
         gyro_rotation_yaw = (gyro_z_cam*cos(angle_cam[PITCH]*D2R) + gyro_y_cam*sin(angle_cam[PITCH]*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R) ;
+        feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps);
       }
 
-      feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps);
       step_yaw = feed_cam_rotation_yaw + feed_cam_angle_yaw;
 
       // current step to be given based on motor direction
