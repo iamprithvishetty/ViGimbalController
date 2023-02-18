@@ -260,16 +260,10 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       // store the imu rotation value here for the motor to move
       float gyro_rotation_yaw;
       // value to be feeded for gyro correction
-      float feed_cam_rotation_yaw;
+      float feed_cam_rotation_yaw = 0;
 
       float step_yaw;
       if(imu_platform_enable && imu_platform.is_initialized){
-        if(angle_cam[YAW]>1){
-          feed_cam_angle_yaw = 10;
-        }
-        else if(angle_cam[YAW]<-1){
-          feed_cam_angle_yaw = -10;
-        }
         gyro_rotation_yaw = (gyro_z_cam*cos((angle_cam[PITCH]-relative_pitch)*D2R) + gyro_y_cam*sin((angle_cam[PITCH]-relative_pitch)*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R);
         feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps) + gyro_z_platform * dt * to_steps;
       }
