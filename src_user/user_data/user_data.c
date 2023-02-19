@@ -145,7 +145,7 @@ pid_accessor pid_yaw_angle = {
 };
 
 gimbal_mode_data user_gimbal_mode_data = {
-  .gimbal_mode = FOLLOW,
+  .gimbal_mode = LOCK,
   .yaw_dead_zone = 4,
   .yaw_speed = 3,
   .pitch_dead_zone = 4,

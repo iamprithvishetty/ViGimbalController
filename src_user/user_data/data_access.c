@@ -41,7 +41,7 @@ data_access user_conf_data[] = {
     {.message = "IMU1_ORIENTATION" , .type = INTEGER,   .data_int = &imu_cam.orientation,.data_int_min = 1,     .data_int_max = 24},
     {.message = "IMU2_ORIENTATION" , .type = INTEGER,   .data_int = &imu_platform.orientation,.data_int_min = 1,.data_int_max = 24},
 
-    {.message = "MODE"           , .type = INTEGER, .data_int   = &user_gimbal_mode_data.gimbal_mode  , .data_int_min = 1  , .data_int_max = 2},
+    {.message = "MODE"           , .type = INTEGER, .data_int   = &user_gimbal_mode_data.gimbal_mode  , .data_int_min = 1  , .data_int_max = 3},
     {.message = "YAW_DEAD_ZONE"  , .type = FLOATING,.data_float = &user_gimbal_mode_data.yaw_dead_zone, .data_float_min = 4, .data_float_max = 15},
     {.message = "YAW_SPEED"      , .type = INTEGER, .data_int   = &user_gimbal_mode_data.yaw_speed    , .data_int_min = 1,   .data_int_max = 5},
     {.message = "PITCH_DEAD_ZONE", .type = FLOATING,.data_float = &user_gimbal_mode_data.yaw_dead_zone, .data_float_min = 4, .data_float_max = 15},
