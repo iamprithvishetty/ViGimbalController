@@ -84,3 +84,52 @@ Strom32 BGC - ***STM32F103RCT6***
     ```sh
     make upload
     ```
+
+## Gimbal USB Commands
+
+**How to Use**
+- Retrieve the data ***GC+Command?*** Eg :- ***GC+PWR_PITCH?***
+- Set the data ***GC+Command=Value*** Eg :- ***GC+PWR+PITCH=35***
+- Min value is the minimum it can be set to
+- Max value is the maximum it can be set to
+- If Min and Max both are 0 then the data is only readable
+- Default value is the initial setting of the attribute
+- The data is either Integer i.e -2, -1, 0, 1, 2 etc or Float i.e 1.5, 1.2, 0.5,-0.2, -1.3 etc
+
+
+
+| Attribute                            | Command          | Min | Max  | Default | Type     |
+|--------------------------------------|------------------|-----|------|---------|----------|
+| Pitch Power                          | PWR_PITCH        | 0   | 100  | 40      | INTEGER  |
+| Pitch Pole Pair                      | PP_PITCH         | 0   | 20   | 7       | INTEGER  |
+| Pitch Motor Direction                | DIR_PITCH        | -1  | 1    | 1       | INTEGER  |
+| Proportional Gain Angle Pitch        | P_ANG_PITCH      | 0   | 1000 | 1.0     | FLOATING |
+| Proportional Gain Rotation Pitch     | P_ROT_PITCH      | 0   | 1000 | 20.0    | FLOATING |
+| Integral Gain Rotation Pitch         | I_ROT_PITCH      | 0   | 1000 | 0.0     | FLOATING |
+| Derivative Gain Rotation Pitch       | D_ROT_PITCH      | 0   | 1000 | 0.1     | FLOATING |
+| Pitch User Angle                     | ANGLE_PITCH      | -90 | 90   | 0.0     | FLOATING |
+| Roll Power                           | PWR_ROLL         | 0   | 100  | 50      | INTEGER  |
+| Roll Pole Pair                       | PP_ROLL          | 0   | 20   | 7       | INTEGER  |
+| Roll Motor Direction                 | DIR_ROLL         | -1  | 1    | 1       | INTEGER  |
+| Proportional Gain Angle Roll         | P_ANG_ROLL       | 0   | 1000 | 1.0     | FLOATING |
+| Proportional Gain Rotation Roll      | P_ROT_ROLL       | 0   | 1000 | 30.0    | FLOATING |
+| Integral Gain Rotation Roll          | I_ROT_ROLL       | 0   | 1000 | 0.0     | FLOATING |
+| Derivative Gain Rotation Roll        | D_ROT_ROLL       | 0   | 1000 | 0.45    | FLOATING |
+| Yaw Power                            | PWR_YAW          | 0   | 100  | 30      | INTEGER  |
+| Yaw Pole Pair                        | PP_YAW           | 0   | 20   | 7       | INTEGER  |
+| Yaw Motor Direction                  | DIR_YAW          | -1  | 1    | 1       | INTEGER  |
+| Proportional Gain Rotation Yaw       | P_ROT_YAW        | 0   | 1000 | 20.0    | FLOATING |
+| Integral Gain Rotation Yaw           | I_ROT_YAW        | 0   | 1000 | 0.0     | FLOATING |
+| Derivative Gain Rotation Yaw         | D_ROT_YAW        | 0   | 1000 | 0.1     | FLOATING |
+| Debug via USB                        | DEBUG            | 0   | 1    | 0       | INTEGER  |
+| R1 Resistor Voltage Divider in kOhms | RESISTOR_UP      | 0   | 1000 | 0.0     | FLOATING |
+| R2 Resistor Voltage Divider in kOhms | RESISTOR_DOWN    | 0   | 1000 | 0.0     | FLOATING |
+| Battery Voltage in V                 | BATT_VOLT        | 0   | 0    |         | FLOATING |
+| Battery LPF Gain                     | BATT_ALPHA       | 0   | 1    | 0.0     | FLOATING |
+| Enable IMU 2                         | ENABLE_IMU2      | 0   | 1    | 0       | INTEGER  |
+| IMU 1 Orientation                    | IMU1_ORIENTATION | 1   | 24   | 1       | INTEGER  |
+| Gimbal Mode                          | MODE             | 1   | 3    | 1       | INTEGER  |
+| Yaw Dead Zone                        | YAW_DEAD_ZONE    | 4   | 15   | 4       | FLOATING |
+| Yaw Speed                            | YAW_SPEED        | 1   | 5    | 3       | INTEGER  |
+| Pitch Dead Zone                      | PITCH_DEAD_ZONE  | 4   | 15   | 4       | FLOATING |
+| Pitch Speed                          | PITCH_SPEED      | 1   | 5    | 3       | INTEGER  |
