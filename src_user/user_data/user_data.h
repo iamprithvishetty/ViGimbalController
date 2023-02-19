@@ -5,6 +5,7 @@
 #include "madgwick.h"
 #include "motor_access.h"
 #include "pid_access.h"
+#include "gimbal_mode.h"
 
 extern imu_accessor imu_cam;
 extern imu_accessor imu_platform;
@@ -23,6 +24,8 @@ extern pid_accessor pid_yaw_rotation;
 extern pid_accessor pid_pitch_angle;
 extern pid_accessor pid_roll_angle;
 extern pid_accessor pid_yaw_angle;
+
+extern gimbal_mode_data user_gimbal_mode_data;
 
 extern float user_pitch_angle;
 extern float user_roll_angle;

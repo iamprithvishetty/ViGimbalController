@@ -114,6 +114,8 @@ USERINC += ./src_system/system_usb
 
 USERINC += ./src_user/user_data
 
+USERINC += ./src_gimbal_mode
+
 USERINC += ./src_utilities/utilities_calibration
 USERINC += ./src_utilities/utilities_i2c
 USERINC += ./src_utilities/utilities_math
@@ -137,6 +139,8 @@ USERSRC += ./src_system/system_usb/usbcfg.c
 
 USERSRC += ./src_user/user_data/user_data.c
 USERSRC += ./src_user/user_data/data_access.c
+
+USERSRC += ./src_gimbal_mode/gimbal_mode.c
 
 USERSRC += ./src_utilities/utilities_calibration/calibration_gyro.c
 USERSRC += ./src_utilities/utilities_i2c/i2c_chibi.c

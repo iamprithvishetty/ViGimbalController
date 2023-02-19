@@ -35,6 +35,8 @@
 #include "user_data.h"
 #include "math_utils.h"
 
+#include "gimbal_mode.h"
+
 
 /*
  * gimbal thread
@@ -203,17 +205,21 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       float gyro_rotation_pitch;
       // value to be feeded for gyro correction
       float feed_cam_rotation_pitch;
+      // value to be feeded for gimbal mode 
+      float feed_cam_mode_pitch = 0;
 
       float step_pitch;
       if(imu_platform_enable && imu_platform.is_initialized){
         gyro_rotation_pitch = gyro_x_cam;
+
+        feed_cam_mode_pitch = process_mode_pitch(user_gimbal_mode_data, motor_pitch, relative_pitch)*dt;
       }
       else {
         gyro_rotation_pitch = gyro_x_cam;
       }
 
       feed_cam_rotation_pitch = update_pid(&pid_pitch_rotation, gyro_rotation_pitch * dt * to_steps);
-      step_pitch = feed_cam_angle_pitch + feed_cam_rotation_pitch;
+      step_pitch = feed_cam_angle_pitch + feed_cam_rotation_pitch + feed_cam_mode_pitch;
 
       // current step to be given based on motor direction
       int feed_step = (int)step_pitch*motor_pitch.direction;
@@ -261,18 +267,22 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       float gyro_rotation_yaw;
       // value to be feeded for gyro correction
       float feed_cam_rotation_yaw = 0;
+      // value to be feeded for gimbal mode
+      float feed_cam_mode_yaw = 0;
 
       float step_yaw;
       if(imu_platform_enable && imu_platform.is_initialized){
         gyro_rotation_yaw = (gyro_z_cam*cos((angle_cam[PITCH]-relative_pitch)*D2R) + gyro_y_cam*sin((angle_cam[PITCH]-relative_pitch)*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R);
         feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps) + gyro_z_platform * dt * to_steps;
+
+        feed_cam_mode_yaw = process_mode_yaw(user_gimbal_mode_data, motor_yaw, relative_yaw)*dt;
       }
       else {
         gyro_rotation_yaw = (gyro_z_cam*cos(angle_cam[PITCH]*D2R) + gyro_y_cam*sin(angle_cam[PITCH]*D2R))*cos(angle_cam[ROLL]*D2R) - gyro_x_cam*sin(angle_cam[ROLL]*D2R) ;
         feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps);
       }
 
-      step_yaw = feed_cam_rotation_yaw + feed_cam_angle_yaw;
+      step_yaw = feed_cam_rotation_yaw + feed_cam_angle_yaw + feed_cam_mode_yaw;
 
       // current step to be given based on motor direction
       feed_step = (int)step_yaw*motor_yaw.direction;

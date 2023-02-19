@@ -3,6 +3,7 @@
 #include "madgwick.h"
 #include "motor_access.h"
 #include "pid_access.h"
+#include "gimbal_mode.h"
 
 imu_accessor imu_cam = {
 
@@ -141,6 +142,14 @@ pid_accessor pid_yaw_angle = {
   .error_cutoff = 0.0f,
   .derivative_cutoff = 0.0f
 
+};
+
+gimbal_mode_data user_gimbal_mode_data = {
+  .gimbal_mode = FOLLOW,
+  .yaw_dead_zone = 4,
+  .yaw_speed = 3,
+  .pitch_dead_zone = 4,
+  .pitch_speed = 3
 };
 
 float user_pitch_angle = 0.0f;
