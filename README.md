@@ -133,3 +133,85 @@ Strom32 BGC - ***STM32F103RCT6***
 | Yaw Speed                            | YAW_SPEED        | 1   | 5    | 3       | INTEGER  |
 | Pitch Dead Zone                      | PITCH_DEAD_ZONE  | 4   | 15   | 4       | FLOATING |
 | Pitch Speed                          | PITCH_SPEED      | 1   | 5    | 3       | INTEGER  |
+
+## Command Description
+
+***Pitch Power, Roll Power and Yaw Power***
+- Voltage supplied to the motor, ranges from 0-100%
+
+***Pitch Pole Pair, Roll Pole Pair and Yaw Pole Pair***
+- The number of pole pairs for each motor
+
+***Pitch Motor Direction, Roll Motor Direction and Yaw Motor Direction***
+- The direction can either be -1 or +1, 0 means the motor won't move
+- The motor direction needs to be set based on it default rotation direction
+
+***Proporitonal Gain Angle Pitch, Proportional Gain Angle Roll and Proportional Gain Angle Yaw***
+- This is the proportional gain component for the angle correction
+- Higher the gain the faster the angle will get corrected but it'll be more unstable
+- Try finding the sweet spot, 1.0 normally works fine
+
+***Proportional Gain Rotation Pitch, Proportional Gain Rotation Roll and Proportional Gain Rotation Yaw***
+- This is the proportional gain component for the rotation correction
+- Higher the gain better the response but it's prone to be unstable at very high values
+- Try finding the sweet spot, normally greater than 10.0
+
+***Integral Gain Rotation Pitch, Integeral Gain Rotation Roll and Integral Gain Rotation Yaw***
+- This is the integral gain component for the rotation component
+- There's a provision given for integral but it's better to not use it here as it doesn't help much
+
+***Derivative Gain Rotation Pitch, Derivative Gain Rotation Roll and Derivative Gain Rotation Yaw***
+- This is the derivative gain component for the rotation correction
+- Higher the value more unstable the response will be, keep the values lower initially and then try increasing
+
+***Pitch User Angle***
+- The default angle for camera pitch, the camera will try to be at that angle
+
+***Debug via USB***
+- This starts printing out the raw value for accel, gyro and angle
+- The data are in order accel_x_cam, accel_y_cam, accel_z_cam, gyro_x_cam, gyro_y_cam, gyro_z_cam, angle_cam[PITCH], angle_cam[ROLL], angle_cam[YAW], accel_x_platform, accel_y_platform, accel_z_platform, gyro_x_platform, gyro_y_platform, gyro_z_platform, angle_platform[PITCH], angle_platform[ROLL], angle_platform[YAW], relative_yaw, relative_pitch
+
+***Battery Functionalities***
+- Yet to be added
+
+***Enable IMU2***
+- Enables the IMU2 if present, and uses the IMU2 for better stabilization
+- Currently the IMU2 is supported only for one orientation (x-> left, y-> back, z-> up) wrt camera pov
+- Here it is important to ensure that the inital position of the camera is facing the one mentioned above, after that IMU2 should be enabled
+
+***IMU 1 Orientation***
+- There are 16 IMU1 orientations supported currently
+- The Camera POV is always front, the IMU orientation is wrt the camera
+
+| Value     | Orientation IMU                   |
+|-----------|-----------------------------------|
+| 1         |   x-> right, y-> back, z-> down   |
+| 2         |   x-> back, y-> left, z-> down    |
+| 3         |   x-> left, y-> front, z->down    |
+| 4         |   x-> front, y->right, z->down    |
+| 5         |   x-> right, y->front, z->up      |
+| 6         |   x-> back, y->right, z->up       |
+| 7         |   x->left, y->back, z->up         |
+| 8         |   x->front, y->left, z->up        |
+| 9         |   x->right, y->down, z->front     |
+| 10        |   x->back, y->down, z->right      |
+| 11        |   x->left, y->down, z->back       |
+| 12        |   x->back, y->down, z->left       |
+| 13        |   x->right, y->up, z->back        |
+| 14        |   x->front, y->up, z->right       |
+| 15        |   x->left, y->up, z->front        |
+| 16        |   x->back, y->up, z->left         |
+
+***Gimbal Modes***
+- There are three Gimbal Modes
+- Gimbal Modes are only active when IMU2 is enabled
+1) Lock Mode - The Gimbal will lock itself at that postion
+2) Pan Mode - The Yaw will pan based on the movement
+3) Follow Mode - The Pitch and Yaw will pan based on the movement
+
+***Yaw and Pitch Dead Zone***
+- The pitch and yaw dead zone can be set for pan and follow mode
+- This is to restrict the movement for certain angle threhsold
+
+***Yaw and Pitch Speed***
+- This is the speed it should move at in pan and follow mode
