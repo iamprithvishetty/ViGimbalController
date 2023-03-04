@@ -287,7 +287,10 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       // current step to be given based on motor direction
       feed_step = (int)step_yaw*motor_yaw.direction;
 
-      yaw_step_memory += feed_step;
+      // To avoid rotation due to small bias
+      if(feed_step > 3 || feed_step < -3) {
+        yaw_step_memory += feed_step;
+      }
       set_pwm_direct(&motor_yaw, &yaw_step_memory);
 
       // system time end
