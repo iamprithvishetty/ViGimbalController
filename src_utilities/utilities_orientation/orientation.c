@@ -160,8 +160,8 @@ void orientation_remap(imu_accessor *current_imu, float *ax, float *ay, float *a
             case 14:
                 temporary = *ax;
                 *ax = -*az;
-                *ay = -temporary;
                 *az = *ay;
+                *ay = -temporary;
                 temporary = *gx;
                 *gx = -*gz;
                 *gz = *gy;
@@ -173,9 +173,9 @@ void orientation_remap(imu_accessor *current_imu, float *ax, float *ay, float *a
                 temporary = *ay;
                 *ax = *ax;
                 *ay = -*az;
-                *az = *ay;
-                *gx = *gx;
+                *az = temporary;
                 temporary = *gy;
+                *gx = *gx;
                 *gy = -*gz;
                 *gz = temporary;
                 break;
@@ -191,29 +191,101 @@ void orientation_remap(imu_accessor *current_imu, float *ax, float *ay, float *a
                 *gz = *gy;
                 *gy = temporary;
                 break;
-
+            
+            // x->down, y->front , z->right
             case 17:
+                temporary = *ax;
+                *ax = -*az;
+                *ay = -*ay;
+                *az = -temporary;
+                temporary = *gx;
+                *gx = -*gz;
+                *gy = -*gy;
+                *gz = -temporary;
                 break;
 
+            // x->down, y->right , z->back
             case 18:
+                temporary = *ax;
+                *ax = -*ay;
+                *ay = *az;
+                *az = -temporary;
+                temporary = *gx;
+                *gx = -*gy;
+                *gy = -*gz;
+                *gz = -temporary;
                 break;
 
+            // x->down, y->back , z->left
             case 19:
+                temporary = *ax;
+                *ax = *az;
+                *ay = *ay;
+                *az = -temporary;
+                temporary = *gx;
+                *gx = *gz;
+                *gy = *gy;
+                *gz = -temporary;
                 break;
 
+            // x->down, y->left , z->front
             case 20:
+                temporary = *ax;
+                *ax = *ay;
+                *ay = -*az;
+                *az = -temporary;
+                temporary = *gx;
+                *gx = *gy;
+                *gy = -*gz;
+                *gz = -temporary;
                 break;
 
+            // x->up, y->back, z->right
             case 21:
+                temporary = *ax;
+                *ax = -*az;
+                *ay = *ay;
+                *az = temporary;
+                temporary = *gx;
+                *gx = -*gz;
+                *gy = *gy;
+                *gz = temporary;
                 break;
-
+            
+            // x->up, y->left, z->back
             case 22:
+                temporary = *ax;
+                *ax = *ay;
+                *ay = *az;
+                *az = temporary;
+                temporary = *gx;
+                *gx = *gy;
+                *gy = *gz;
+                *gz = temporary;
                 break;
 
+            // x->up, y->front, z->left
             case 23:
+                temporary = *ax;
+                *ax = *az;
+                *ay = -*ay;
+                *az = temporary;
+                temporary = *gx;
+                *gx = *gz;
+                *gy = -*gy;
+                *gz = temporary;
                 break;
 
+            // x->up, y->right, z->front
             case 24:
+                temporary = *ax;
+                *ax = -*ay;
+                *ay = -*az;
+                *az = temporary;
+                temporary = *gx;
+                *gx = -*gy;
+                *gy = -*gz;
+                *gz = temporary;
                 break;
 
 
