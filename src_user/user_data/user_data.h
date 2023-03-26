@@ -6,6 +6,7 @@
 #include "motor_access.h"
 #include "pid_access.h"
 #include "gimbal_mode.h"
+#include "rc_input.h"
 
 extern imu_accessor imu_cam;
 extern imu_accessor imu_platform;
@@ -26,6 +27,9 @@ extern pid_accessor pid_roll_angle;
 extern pid_accessor pid_yaw_angle;
 
 extern gimbal_mode_data user_gimbal_mode_data;
+
+extern rc_accessor pitch_rc_conf;
+extern rc_accessor yaw_rc_conf;
 
 extern float user_pitch_angle;
 extern float user_roll_angle;

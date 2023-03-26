@@ -122,6 +122,8 @@ USERINC += ./src_utilities/utilities_math
 USERINC += ./src_utilities/utilities_miscellaneous
 USERINC += ./src_utilities/utilities_orientation
 
+USERINC += ./src_rc_input
+
 USERSRC += ./src_communication/communication_message/message_access.c
 
 USERSRC += ./src_flash/flash.c
@@ -146,6 +148,8 @@ USERSRC += ./src_utilities/utilities_calibration/calibration_gyro.c
 USERSRC += ./src_utilities/utilities_i2c/i2c_chibi.c
 USERSRC += ./src_utilities/utilities_math/math_utils.c
 USERSRC += ./src_utilities/utilities_orientation/orientation.c
+
+USERSRC += ./src_rc_input/rc_input.c
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk

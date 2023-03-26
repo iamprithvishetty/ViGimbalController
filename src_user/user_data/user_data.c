@@ -4,6 +4,7 @@
 #include "motor_access.h"
 #include "pid_access.h"
 #include "gimbal_mode.h"
+#include "rc_input.h"
 
 imu_accessor imu_cam = {
 
@@ -150,6 +151,22 @@ gimbal_mode_data user_gimbal_mode_data = {
   .yaw_speed = 3,
   .pitch_dead_zone = 4,
   .pitch_speed = 3
+};
+
+rc_accessor pitch_rc_conf = {
+  .upper_threshold = 2000,
+  .lower_threshold = 1000,
+  .center = 1500,
+  .dead_zone = 25,
+  .direction = 1
+};
+
+rc_accessor yaw_rc_conf = {
+  .upper_threshold = 2000,
+  .lower_threshold = 1000,
+  .center = 1500,
+  .dead_zone = 25,
+  .direction = 1
 };
 
 float user_pitch_angle = 0.0f;

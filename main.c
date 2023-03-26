@@ -44,6 +44,9 @@
 
 bool gimbal_thread_initialized = false;
 
+// sampling time in seconds
+float dt = 0.002;
+
 // To store imu values for cam
 float gyro_x_cam,gyro_y_cam,gyro_z_cam;
 float accel_x_cam,accel_y_cam,accel_z_cam;
@@ -57,6 +60,9 @@ float angle_platform[3];
 // To store relative angles
 float relative_yaw, relative_pitch;
 
+// To store value from rc input
+int feed_rc_pitch = 0, feed_rc_yaw = 0;
+
 static THD_WORKING_AREA(wa_thread_gimbal, 2048);
 static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 {
@@ -64,8 +70,6 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
   (void)arg;
   chRegSetThreadName("gimbal");
 
-  // sampling time in seconds
-  float dt = 0.002;
   // sampling time in microseconds
   int dt_us = (int)(dt*1e6);
 
@@ -195,10 +199,18 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       // calculate relative pitch between platform and camera
       relative_pitch = angle_platform[PITCH]*cos(relative_yaw*D2R) + angle_platform[ROLL]*sin(relative_yaw*D2R);
 
-    
-      // calculate the value to be feeded for angle correction
-      float feed_cam_angle_pitch = update_pid(&pid_pitch_angle, angle_cam[PITCH]-user_pitch_angle);
-      
+      float feed_cam_angle_pitch = 0;
+      if(feed_rc_pitch == 0) {
+        // calculate the value to be feeded for angle correction
+        float feed_cam_angle_pitch = update_pid(&pid_pitch_angle, angle_cam[PITCH]-user_pitch_angle);
+      } else {
+        // Threshold check to avoid rotation at all times
+        if(angle_cam[PITCH]>80 || angle_cam[PITCH]<-80){
+          feed_rc_pitch = 0;
+        }
+        user_pitch_angle = angle_cam[PITCH];
+      }
+
       // factor for converting angle to steps
       float to_steps = (float)SIN_ARRAY_SIZE*(float)motor_pitch.pole_pair/360.0;
       // store the imu rotation value here for the motor to move
@@ -219,7 +231,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
       }
 
       feed_cam_rotation_pitch = update_pid(&pid_pitch_rotation, gyro_rotation_pitch * dt * to_steps);
-      step_pitch = feed_cam_angle_pitch + feed_cam_rotation_pitch + feed_cam_mode_pitch;
+      step_pitch = feed_cam_angle_pitch + feed_cam_rotation_pitch + feed_cam_mode_pitch + feed_rc_pitch;
 
       // current step to be given based on motor direction
       int feed_step = (int)step_pitch*motor_pitch.direction;
@@ -282,13 +294,13 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
         feed_cam_rotation_yaw = update_pid(&pid_yaw_rotation, gyro_rotation_yaw * dt * to_steps);
       }
 
-      step_yaw = feed_cam_rotation_yaw + feed_cam_angle_yaw + feed_cam_mode_yaw;
+      step_yaw = feed_cam_rotation_yaw + feed_cam_angle_yaw + feed_cam_mode_yaw + feed_rc_yaw;
 
       // current step to be given based on motor direction
       feed_step = (int)step_yaw*motor_yaw.direction;
 
       // To avoid rotation due to small bias
-      if(feed_step > 3 || feed_step < -3) {
+      if(feed_step > 3 || feed_step < -3 || feed_rc_yaw!=0) {
         yaw_step_memory += feed_step;
       }
       set_pwm_direct(&motor_yaw, &yaw_step_memory);
@@ -403,6 +415,24 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_blink, arg)
   }
 }
 
+/*
+ * rc input thread
+ */
+
+static THD_WORKING_AREA(wa_thread_rc, 128);
+static __attribute__((noreturn)) THD_FUNCTION(thread_rc, arg)
+{
+
+  (void)arg;
+  chRegSetThreadName("rc_input");
+  while (true)
+  {
+    feed_rc_pitch = process_pitch_input(motor_pitch, pitch_rc_conf, last_width_tim1, dt);
+    feed_rc_yaw = process_yaw_input(motor_pitch, pitch_rc_conf, last_width_tim8, dt);
+    chThdSleepMilliseconds(20);
+  }
+}
+
 
 /*
  * application entry point.
@@ -491,8 +521,9 @@ int main(void)
    */
 
   chThdCreateStatic(wa_thread_blink, sizeof(wa_thread_blink), NORMALPRIO, thread_blink, NULL);
-  chThdCreateStatic(wa_thread_serial_com, sizeof(wa_thread_serial_com), NORMALPRIO + 1, thread_serial_com, NULL);
-  chThdCreateStatic(wa_thread_gimbal, sizeof(wa_thread_gimbal), NORMALPRIO + 2, thread_gimbal, NULL);
+  chThdCreateStatic(wa_thread_rc, sizeof(wa_thread_rc), NORMALPRIO + 1, thread_rc, NULL);
+  chThdCreateStatic(wa_thread_serial_com, sizeof(wa_thread_serial_com), NORMALPRIO + 2, thread_serial_com, NULL);
+  chThdCreateStatic(wa_thread_gimbal, sizeof(wa_thread_gimbal), NORMALPRIO + 3, thread_gimbal, NULL);
 
   /*
    * Normal main() thread activity

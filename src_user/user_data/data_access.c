@@ -46,6 +46,18 @@ data_access user_conf_data[] = {
     {.message = "YAW_SPEED"      , .type = INTEGER, .data_int   = &user_gimbal_mode_data.yaw_speed    , .data_int_min = 1,   .data_int_max = 5},
     {.message = "PITCH_DEAD_ZONE", .type = FLOATING,.data_float = &user_gimbal_mode_data.yaw_dead_zone, .data_float_min = 4, .data_float_max = 15},
     {.message = "PITCH_SPEED"    , .type = INTEGER, .data_int   = &user_gimbal_mode_data.yaw_speed    , .data_int_min = 1,   .data_int_max = 5},
+
+    {.message = "RC_PITCH_UPPER"    , .type = INTEGER, .data_int   = &pitch_rc_conf.upper_threshold      , .data_int_min = 0  , .data_int_max = 3000},
+    {.message = "RC_PITCH_LOWER"    , .type = INTEGER, .data_int   = &pitch_rc_conf.lower_threshold      , .data_int_min = 0  , .data_int_max = 3000},
+    {.message = "RC_PITCH_CENTER"   , .type = INTEGER, .data_int   = &pitch_rc_conf.center               , .data_int_min = 0,   .data_int_max = 3000},
+    {.message = "RC_PITCH_DEAD_ZONE", .type = INTEGER, .data_int   = &pitch_rc_conf.dead_zone            , .data_int_min = 5,   .data_int_max = 200},
+    {.message = "RC_PITCH_DIR"      , .type = INTEGER, .data_int   = &pitch_rc_conf.direction            , .data_int_min = -1,  .data_int_max = 1},
+
+    {.message = "RC_YAW_UPPER"    , .type = INTEGER, .data_int   = &yaw_rc_conf.upper_threshold      , .data_int_min = 0  , .data_int_max = 3000},
+    {.message = "RC_YAW_LOWER"    , .type = INTEGER, .data_int   = &yaw_rc_conf.lower_threshold      , .data_int_min = 0  , .data_int_max = 3000},
+    {.message = "RC_YAW_CENTER"   , .type = INTEGER, .data_int   = &yaw_rc_conf.center               , .data_int_min = 0,   .data_int_max = 3000},
+    {.message = "RC_YAW_DEAD_ZONE", .type = INTEGER, .data_int   = &yaw_rc_conf.dead_zone            , .data_int_min = 5,   .data_int_max = 200},
+    {.message = "RC_YAW_DIR"      , .type = INTEGER, .data_int   = &yaw_rc_conf.direction            , .data_int_min = -1,  .data_int_max = 1},
 };
 
 const int length_user_conf_data = sizeof(user_conf_data) / sizeof(user_conf_data[0]);
