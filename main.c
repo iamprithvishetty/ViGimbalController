@@ -428,7 +428,7 @@ static __attribute__((noreturn)) THD_FUNCTION(thread_rc, arg)
   while (true)
   {
     feed_rc_pitch = process_pitch_input(motor_pitch, pitch_rc_conf, last_width_tim1, dt);
-    feed_rc_yaw = process_yaw_input(motor_pitch, pitch_rc_conf, last_width_tim8, dt);
+    feed_rc_yaw = process_yaw_input(motor_yaw, yaw_rc_conf, last_width_tim8, dt);
     chThdSleepMilliseconds(20);
   }
 }
