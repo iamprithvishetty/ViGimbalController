@@ -63,7 +63,7 @@ float relative_yaw, relative_pitch;
 // To store value from rc input
 int feed_rc_pitch = 0, feed_rc_yaw = 0;
 
-static THD_WORKING_AREA(wa_thread_gimbal, 2048);
+static THD_WORKING_AREA(wa_thread_gimbal, 4096);
 static __attribute__((noreturn)) THD_FUNCTION(thread_gimbal, arg)
 {
 
